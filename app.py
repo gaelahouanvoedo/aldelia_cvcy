@@ -31,13 +31,15 @@ def search_candidates(competences, df):
                 break
 
     df_select['skills'] = df_select['skills'].apply(lambda x: [comp for comp in competences if comp.lower() in x.lower()])
-    df_select.drop(['skills'], axis=1, inplace=True)
 
     vectorizer = CountVectorizer()
     skills_matrix = vectorizer.fit_transform(df_select['skills'].apply(lambda x: ', '.join(x)))
     similarity_scores = cosine_similarity(skills_matrix, vectorizer.transform([', '.join(competences)]))
     df_select['similarite'] = similarity_scores.flatten()
     df_select = df_select.sort_values('similarite', ascending=False)
+
+    # Supprimer la colonne 'skills' avant de retourner le DataFrame
+    df_select.drop(['skills'], axis=1, inplace=True)
 
     return df_select
 
