@@ -43,7 +43,7 @@ def search_candidates(competences, df):
 
 
 with st.sidebar:
-    image = Image.open('C:/Users/GaelAHOUANVOEDO/DATAWEB/cvCy/cvCy/log.png')
+    image = Image.open('log.png')
     st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
     menu = st.sidebar.selectbox("Menu", ('Introduction', "Charger", "Rechercher"))
@@ -94,7 +94,7 @@ if menu == "Charger":
                     dfs.append(pd.DataFrame({'nom_fichier': [file.name], 'skills': [cv_text]}))
             if dfs:
                 df = pd.concat(dfs, ignore_index=True)
-                df.to_csv('C:/Users/GaelAHOUANVOEDO/DATAWEB/cvCy/cvCy/cv_data.csv', index=False)
+                df.to_csv('cv_data.csv', index=False)
                 st.success(f"{len(dfs)} CVs soumis avec succès !")
             else:
                 st.warning("Aucun fichier PDF valide trouvé. Veuillez télécharger des fichiers PDF.")
