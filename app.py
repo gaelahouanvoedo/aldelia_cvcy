@@ -24,14 +24,14 @@ def search_candidates(competences, df):
     df_select = pd.DataFrame(columns=df.columns)
 
     for index, row in df.iterrows():
-        cv = row['contenu_textuel']
+        cv = row['skills']
         for competence in competences:
             if competence.lower() in cv.lower():
                 df_select = pd.concat([df_select, row.to_frame().transpose()], ignore_index=True)
                 break
 
-    df_select['skills'] = df_select['contenu_textuel'].apply(lambda x: [comp for comp in competences if comp.lower() in x.lower()])
-    df_select.drop(['contenu_textuel'], axis=1, inplace=True)
+    df_select['skills'] = df_select['skills'].apply(lambda x: [comp for comp in competences if comp.lower() in x.lower()])
+    df_select.drop(['skills'], axis=1, inplace=True)
 
     vectorizer = CountVectorizer()
     skills_matrix = vectorizer.fit_transform(df_select['skills'].apply(lambda x: ', '.join(x)))
