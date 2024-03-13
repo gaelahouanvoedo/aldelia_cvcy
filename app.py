@@ -24,22 +24,20 @@ def search_candidates(competences, df):
     df_select = pd.DataFrame(columns=df.columns)
 
     for index, row in df.iterrows():
-        cv = row['skills']
+        cv = row['contenu_textuel']
         for competence in competences:
             if competence.lower() in cv.lower():
                 df_select = pd.concat([df_select, row.to_frame().transpose()], ignore_index=True)
                 break
 
-    df_select['skills'] = df_select['skills'].apply(lambda x: [comp for comp in competences if comp.lower() in x.lower()])
+    df_select['skills'] = df_select['contenu_textuel'].apply(lambda x: [comp for comp in competences if comp.lower() in x.lower()])
+    df_select.drop(['contenu_textuel'], axis=1, inplace=True)
 
     vectorizer = CountVectorizer()
     skills_matrix = vectorizer.fit_transform(df_select['skills'].apply(lambda x: ', '.join(x)))
     similarity_scores = cosine_similarity(skills_matrix, vectorizer.transform([', '.join(competences)]))
     df_select['similarite'] = similarity_scores.flatten()
     df_select = df_select.sort_values('similarite', ascending=False)
-
-    # Supprimer la colonne 'skills' avant de retourner le DataFrame
-    df_select.drop(['skills'], axis=1, inplace=True)
 
     return df_select
 
@@ -48,7 +46,7 @@ with st.sidebar:
     image = Image.open('log.png')
     st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
-    menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app"))
+    menu = st.sidebar.selectbox("Menu", ('Introduction', "Charger", "Rechercher"))
     st.subheader("Informations")
     st.write("Cette application permet de rechercher des mots clés dans une base de CVs", unsafe_allow_html=True)
     '***'
@@ -64,7 +62,7 @@ if menu == "Introduction":
     """)
 
     st.write("""
-    **👈 Pour démarrer, sélectionnez "Lancer l'app" dans la barre latérale.**             
+    **👈 Pour démarrer, sélectionnez "Charger" dans la barre latérale.**             
     """)
 
     st.write("""
@@ -82,7 +80,7 @@ if menu == "Introduction":
     Il s'agit d'une micro application web créé pour un besoin spécifique. Il peut ne pas répondre à vos attentes dans tous vos contexte. Veuilez donc ne pas entièrement vous fier aux résultas issues de son exploitation.
     """)
 
-if menu == "Lancer l'app":
+if menu == "Charger":
     st.title("Chargez un CV.")
 
     cv = st.file_uploader("Chargez un ou plusieurs CV au format PDF", type=["pdf"], accept_multiple_files=True)
@@ -104,6 +102,9 @@ if menu == "Lancer l'app":
             st.warning("Veuillez charger au moins un CV.")
 
         
+    
+if menu == "Rechercher":
+
     st.title("Trouvez le meilleur candidat.")
 
     user_input = st.text_input("Saisir des compétences séparées par des virgules : ")
