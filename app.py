@@ -46,7 +46,7 @@ with st.sidebar:
     image = Image.open('log.png')
     st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
-    menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app")
+    menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app"))
     st.subheader("Informations")
     st.write("Cette application permet de rechercher des mots clés dans une base de CVs", unsafe_allow_html=True)
     '***'
