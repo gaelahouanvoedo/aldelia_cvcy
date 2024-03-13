@@ -46,7 +46,7 @@ with st.sidebar:
     image = Image.open('log.png')
     st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
-    menu = st.sidebar.selectbox("Menu", ('Introduction', "Charger", "Rechercher"))
+    menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app")
     st.subheader("Informations")
     st.write("Cette application permet de rechercher des mots clés dans une base de CVs", unsafe_allow_html=True)
     '***'
@@ -62,7 +62,7 @@ if menu == "Introduction":
     """)
 
     st.write("""
-    **👈 Pour démarrer, sélectionnez "Charger" dans la barre latérale.**             
+    **👈 Pour démarrer, sélectionnez "Lancer l'app" dans la barre latérale.**             
     """)
 
     st.write("""
@@ -80,7 +80,7 @@ if menu == "Introduction":
     Il s'agit d'une micro application web créé pour un besoin spécifique. Il peut ne pas répondre à vos attentes dans tous vos contexte. Veuilez donc ne pas entièrement vous fier aux résultas issues de son exploitation.
     """)
 
-if menu == "Charger":
+if menu == "Lancer l'app":
     st.title("Chargez un CV.")
 
     cv = st.file_uploader("Chargez un ou plusieurs CV au format PDF", type=["pdf"], accept_multiple_files=True)
@@ -102,9 +102,6 @@ if menu == "Charger":
             st.warning("Veuillez charger au moins un CV.")
 
         
-    
-if menu == "Rechercher":
-
     st.title("Trouvez le meilleur candidat.")
 
     user_input = st.text_input("Saisir des compétences séparées par des virgules : ")
