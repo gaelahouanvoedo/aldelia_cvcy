@@ -83,7 +83,7 @@ if menu == "Introduction":
 if menu == "Lancer l'app":
     st.title("Recherchez les mots-clés.")
 
-    user_input = st.text_input("2 - Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
+    user_input = st.text_input("Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
     competences = user_input.split(',')
 
     if st.button("Soumettre"):
