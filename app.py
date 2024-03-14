@@ -40,8 +40,9 @@ def search_candidates(competences, df):
 
     return df_select
 
-df = pd.DataFrame(columns=['nom_fichier', 'skills'])
-
+# Charger df à partir du répertoire courant
+df = pd.read_csv('data.csv')  # Assurez-vous que le fichier est correctement nommé et dans le bon format
+#st.write(df)
 with st.sidebar:
     image = Image.open('log.png')
     st.image(image, width=180)
@@ -50,7 +51,7 @@ with st.sidebar:
     st.subheader("Informations")
     st.write("Cette application permet de rechercher des mots-clés dans une base de CVs.", unsafe_allow_html=True)
     '***'
-    '**Conçu avec ♥ par Gaël Ahouanvoedo**'
+    '**Build with  ♥ par Gaël Ahouanvoedo**'
 
 if menu == "Introduction":
     st.write("""
@@ -80,30 +81,12 @@ if menu == "Introduction":
     """)
 
 if menu == "Lancer l'app":
-    st.title("1 - Chargez les CVs.")
-
-    cv = st.file_uploader("Chargez un ou plusieurs CV au format PDF", type=["pdf"], accept_multiple_files=True)
-
-    st.title("2 - Recherchez les mots-clés.")
+    st.title("Recherchez les mots-clés.")
 
     user_input = st.text_input("2 - Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
     competences = user_input.split(',')
 
     if st.button("Soumettre"):
-        if cv:
-            dfs = []
-            for file in cv:
-                if file.type == "application/pdf":
-                    cv_text = extract_text_from_pdf(file)
-                    dfs.append(pd.DataFrame({'nom_fichier': [file.name], 'skills': [cv_text]}))
-            if dfs:
-                df = pd.concat(dfs, ignore_index=True)
-                st.success(f"{len(dfs)} CVs parcourus avec succès !")
-            else:
-                st.warning("Aucun CV valide trouvé. Veuillez télécharger des fichiers PDF.")
-        else:
-            st.warning("Veuillez charger au moins un CV.")
-
-    if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
-        df_select = search_candidates(competences, df)
-        st.write(df_select)        
+        if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
+            df_select = search_candidates(competences, df)
+            st.write(df_select)
