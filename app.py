@@ -89,16 +89,11 @@ if menu == "Lancer l'app":
     if st.button("Soumettre"):
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
             df_select = search_candidates(competences, df)
+            st.write(df_select)
             
             # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
             df_min = df_select[df_select['similarite'] > 0]
             df_top = df_select[df_select['similarite'] > 0.5]
-            
-            # Barre de sélection pour filtrer par compétences des CVs qui correspondent le mieux
-            selected_competences = st.multiselect("Filtrer par compétences", df_top['skills'].explode().unique(), default=df_top['skills'].explode().unique())
-            df_filtered = df_top[df_top['skills'].apply(lambda x: any(competence.lower() in x.lower() for competence in selected_competences))]
-            
-            st.write(df_filtered)
             
             # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
             if len(df_min) > 0:
@@ -107,7 +102,7 @@ if menu == "Lancer l'app":
                 st.success(f"Il y a {len(df_top)} CVs qui correspondent à plus de la moitié des mots clés.")
                 st.markdown("**Les CVs qui correspondent le mieux :**")
                 rank = 1
-                for idx, row in df_filtered.iterrows():
+                for idx, row in df_top.iterrows():
                     expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir les compétences")
                     with expander:
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
