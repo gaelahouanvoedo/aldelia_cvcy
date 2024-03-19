@@ -89,11 +89,16 @@ if menu == "Lancer l'app":
     if st.button("Soumettre"):
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
             df_select = search_candidates(competences, df)
-            st.write(df_select)
+            
+            # Barre de sélection pour filtrer par compétences
+            selected_competences = st.multiselect("Filtrer par compétences", competences, default=competences)
+            df_filtered = df_select[df_select['skills'].apply(lambda x: any(competence.lower() in x.lower() for competence in selected_competences))]
+            
+            st.write(df_filtered)
             
             # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
-            df_min = df_select[df_select['similarite'] > 0]
-            df_top = df_select[df_select['similarite'] > 0.5]
+            df_min = df_filtered[df_filtered['similarite'] > 0]
+            df_top = df_filtered[df_filtered['similarite'] > 0.5]
             
             # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
             if len(df_min) > 0:
@@ -108,3 +113,4 @@ if menu == "Lancer l'app":
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
                         st.write(cv_row['skills'])
                     rank += 1
+
