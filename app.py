@@ -102,21 +102,18 @@ if menu == "Lancer l'app":
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
                 st.markdown("**Les 10 CVs qui correspondent le mieux :**")
                 
-                # Créer des cases à cocher pour chaque mot-clé
-                checked_competences = {}
+                # Créer des boutons pour chaque mot-clé
                 for competence in competences:
-                    checked_competences[competence.strip()] = st.checkbox(competence.strip(), value=True)
-                
-                rank = 1
-                for idx, row in df_07.head(10).iterrows():
-                    expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir les compétences")
-                    with expander:
-                        cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
-                        # Filtrer les compétences pour celles qui sont cochées
-                        filtered_skills = [skill for skill in cv_row['skills'] if checked_competences.get(skill.strip().lower(), False)]
-                        if filtered_skills:
-                            st.write(filtered_skills)
+                    if competence.strip() in df['skills'].str.lower().str.strip().unique():
+                        button_label = f"Ouvrir {competence.strip()}"
+                        if st.button(button_label):
+                            filtered_cv_list = df_07[df_07['skills'].apply(lambda x: competence.strip().lower() in x.lower())]['skills']
+                            if len(filtered_cv_list) > 0:
+                                st.write(filtered_cv_list)
+                            else:
+                                st.write("Aucun CV ne correspond à cette compétence.")
                         else:
-                            st.write("Aucune compétence correspondante.")
+                            st.write(f"Compétence '{competence.strip()}' masquée.")
+
                     rank += 1
 
