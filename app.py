@@ -103,7 +103,7 @@ if menu == "Lancer l'app":
                 st.markdown("**Les CVs qui correspondent le mieux :**")
                 rank = 1
                 for idx, row in df_top.iterrows():
-                    expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir les compétences")
+                    expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir le CV")
                     with expander:
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
                         st.write(cv_row['skills'])
