@@ -102,7 +102,7 @@ if menu == "Lancer l'app":
                 st.success(f"Il y a {len(df_top)} CVs qui correspondent à plus de la moitié des mots clés.")
                 st.markdown("**Les CVs qui correspondent le mieux :**")
                 rank = 1
-                for idx, row in df_07.head(10).iterrows():
+                for idx, row in df_top.iterrows():
                     expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir les compétences")
                     with expander:
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
