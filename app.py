@@ -42,7 +42,7 @@ def search_candidates(competences, df):
 
 # Charger df à partir du répertoire courant
 df = pd.read_csv('data.csv')  # Assurez-vous que le fichier est correctement nommé et dans le bon format
-#st.write(df)
+
 with st.sidebar:
     image = Image.open('log.png')
     st.image(image, width=180)
@@ -102,4 +102,6 @@ if menu == "Lancer l'app":
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
                 st.write("Les noms des fichiers des 5 CVs qui correspondent le mieux:")
                 for idx, row in df_07.head(5).iterrows():
-                    st.write(row['nom_fichier'])
+                    expander = st.expander(f"{row['nom_fichier']} - Cliquez pour voir les compétences")
+                    with expander:
+                        st.write(row['skills'])
