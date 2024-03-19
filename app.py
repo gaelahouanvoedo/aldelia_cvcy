@@ -101,8 +101,10 @@ if menu == "Lancer l'app":
             if len(df_07) > 0:
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
                 st.markdown("**Les 10 CVs qui correspondent le mieux :**")
+                rank = 1
                 for idx, row in df_07.head(10).iterrows():
-                    expander = st.expander(f"{row['nom_fichier']} - Cliquez pour voir les compétences")
+                    expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir les compétences")
                     with expander:
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
                         st.write(cv_row['skills'])
+                    rank += 1
