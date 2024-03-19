@@ -113,6 +113,3 @@ if menu == "Lancer l'app":
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
                         st.write(cv_row['skills'])
                     rank += 1
-
-
-
