@@ -102,15 +102,7 @@ if menu == "Lancer l'app":
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
                 st.markdown("**Les 10 CVs qui correspondent le mieux :**")
                 
-            # Créer des boutons pour chaque mot-clé
-            for competence in competences:
-                if competence.strip() in df['skills'].str.lower().str.strip().unique():
-                    button_label = f"Ouvrir {competence.strip()}"
-                    if st.button(button_label):
-                        filtered_cv_list = df_07[df_07['skills'].apply(lambda x: competence.strip().lower() in x.lower())]['skills']
-                        if len(filtered_cv_list) > 0:
-                            st.write(filtered_cv_list)
-                        else:
-                            st.write("Aucun CV ne correspond à cette compétence.")
-                    else:
-                            st.write(f"Compétence '{competence.strip()}' masquée.")
+                # Créer des boutons pour chaque mot-clé
+                for competence in competences:
+                    if competence.strip().lower() in df_select.iloc[0]['skills'].lower():
+                        st.button(competence.strip())
