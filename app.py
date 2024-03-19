@@ -114,6 +114,3 @@ if menu == "Lancer l'app":
                                 st.write("Aucun CV ne correspond à cette compétence.")
                         else:
                             st.write(f"Compétence '{competence.strip()}' masquée.")
-
-                    rank += 1
-
