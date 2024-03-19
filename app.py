@@ -101,10 +101,22 @@ if menu == "Lancer l'app":
             if len(df_07) > 0:
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
                 st.markdown("**Les 10 CVs qui correspondent le mieux :**")
+                
+                # Créer des cases à cocher pour chaque mot-clé
+                checked_competences = {}
+                for competence in competences:
+                    checked_competences[competence.strip()] = st.checkbox(competence.strip(), value=True)
+                
                 rank = 1
                 for idx, row in df_07.head(10).iterrows():
                     expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir les compétences")
                     with expander:
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
-                        st.write(cv_row['skills'])
+                        # Filtrer les compétences pour celles qui sont cochées
+                        filtered_skills = [skill for skill in cv_row['skills'] if checked_competences.get(skill.strip().lower(), False)]
+                        if filtered_skills:
+                            st.write(filtered_skills)
+                        else:
+                            st.write("Aucune compétence correspondante.")
                     rank += 1
+
