@@ -88,21 +88,15 @@ if menu == "Lancer l'app":
 
     if st.button("Soumettre"):
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
-
-
-if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
-    df_select = search_candidates(competences, df)
-    st.write(df_select)
-    
-    # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
-    df_05 = df_select[df_select['similarite'] > 0.5]
-    df_07 = df_select[df_select['similarite'] > 0.7]
-    
-    # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
-    if len(df_05) > 0:
-        st.info(f"Il y a {len(df_05)} CVs avec une similarité supérieure à 0.5.")
-    if len(df_07) > 0:
-        st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
-
             df_select = search_candidates(competences, df)
             st.write(df_select)
+            
+            # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
+            df_05 = df_select[df_select['similarite'] > 0.5]
+            df_07 = df_select[df_select['similarite'] > 0.7]
+            
+            # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
+            if len(df_05) > 0:
+                st.info(f"Il y a {len(df_05)} CVs avec une similarité supérieure à 0.5.")
+            if len(df_07) > 0:
+                st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
