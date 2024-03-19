@@ -98,5 +98,11 @@ if menu == "Lancer l'app":
             # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
             if len(df_05) > 0:
                 st.info(f"Il y a {len(df_05)} CVs avec une similarité supérieure à 0.5.")
+                st.write("Les noms des fichiers des 5 CVs qui correspondent le mieux:")
+                for idx, row in df_05.head(5).iterrows():
+                    st.write(row['nom_fichier'])
             if len(df_07) > 0:
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
+                st.write("Les noms des fichiers des 5 CVs qui correspondent le mieux:")
+                for idx, row in df_07.head(5).iterrows():
+                    st.write(row['nom_fichier'])
