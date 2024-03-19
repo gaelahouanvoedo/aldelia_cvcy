@@ -100,8 +100,9 @@ if menu == "Lancer l'app":
                 st.info(f"Il y a {len(df_05)} CVs avec une similarité supérieure à 0.5.")
             if len(df_07) > 0:
                 st.success(f"Il y a {len(df_07)} CVs avec une similarité supérieure à 0.7.")
-                st.write("Les noms des fichiers des 5 CVs qui correspondent le mieux:")
-                for idx, row in df_07.head(5).iterrows():
+                st.markdown("**Les noms des fichiers des 10 CVs qui correspondent le mieux :**")
+                for idx, row in df_07.head(10).iterrows():
                     expander = st.expander(f"{row['nom_fichier']} - Cliquez pour voir les compétences")
                     with expander:
-                        st.write(row['skills'])
+                        cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
+                        st.write(cv_row['skills'])
