@@ -115,3 +115,4 @@ if menu == "Lancer l'app":
                     rank += 1
 
 
+
