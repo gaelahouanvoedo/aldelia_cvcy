@@ -40,18 +40,17 @@ def search_candidates(competences, df):
 
     return df_select
 
-# Charger df à partir du répertoire courant
-df = pd.read_csv('data.csv')  # Assurez-vous que le fichier est correctement nommé et dans le bon format
+df = pd.DataFrame(columns=['nom_fichier', 'skills'])
 
 with st.sidebar:
-    image = Image.open('log.png')
+    image = Image.open('C:/Users\GaelAHOUANVOEDO\DATAWEB\cvCy\cvCy/log.png')
     st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
     menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app"))
     st.subheader("Informations")
     st.write("Cette application permet de rechercher des mots-clés dans une base de CVs.", unsafe_allow_html=True)
     '***'
-    '**Build with  ♥ par Gaël Ahouanvoedo**'
+    '**Conçu avec ♥ par Gaël Ahouanvoedo**'
 
 if menu == "Introduction":
     st.write("""
@@ -81,30 +80,30 @@ if menu == "Introduction":
     """)
 
 if menu == "Lancer l'app":
-    st.title("Recherchez les mots-clés.")
+    st.title("1 - Chargez les CVs.")
 
-    user_input = st.text_input("Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
+    cv = st.file_uploader("Chargez un ou plusieurs CV au format PDF", type=["pdf"], accept_multiple_files=True)
+
+    st.title("2 - Recherchez les mots-clés.")
+
+    user_input = st.text_input("2 - Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
     competences = user_input.split(',')
 
     if st.button("Soumettre"):
-        if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
-            df_select = search_candidates(competences, df)
-            st.write(df_select)
-            
-            # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
-            df_min = df_select[df_select['similarite'] > 0]
-            df_top = df_select[df_select['similarite'] > 0.5]
-            
-            # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
-            if len(df_min) > 0:
-                st.info(f"Il y a {len(df_min)} CVs qui correspondent à au moins un mot clé.")
-            if len(df_top) > 0:
-                st.success(f"Il y a {len(df_top)} CVs qui correspondent à plus de la moitié des mots clés.")
-                st.markdown("**Les CVs qui correspondent le mieux :**")
-                rank = 1
-                for idx, row in df_top.iterrows():
-                    expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir le CV")
-                    with expander:
-                        cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
-                        st.write(cv_row['skills'])
-                    rank += 1
+        if cv:
+            dfs = []
+            for file in cv:
+                if file.type == "application/pdf":
+                    cv_text = extract_text_from_pdf(file)
+                    dfs.append(pd.DataFrame({'nom_fichier': [file.name], 'skills': [cv_text]}))
+            if dfs:
+                df = pd.concat(dfs, ignore_index=True)
+                st.success(f"{len(dfs)} CVs parcourus avec succès !")
+            else:
+                st.warning("Aucun CV valide trouvé. Veuillez télécharger des fichiers PDF.")
+        else:
+            st.warning("Veuillez charger au moins un CV.")
+
+    if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
+        df_select = search_candidates(competences, df)
+        st.write(df_select)        
