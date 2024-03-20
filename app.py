@@ -106,7 +106,6 @@ if menu == "Lancer l'app":
 
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
             df_select = search_candidates(competences, df)
-            st.write(df_select)
             
             # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
             df_min = df_select[df_select['similarite'] > 0]
