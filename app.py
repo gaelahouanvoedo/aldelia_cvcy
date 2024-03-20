@@ -90,14 +90,28 @@ if menu == "Lancer l'app":
     competences = user_input.split(',')
 
     if st.button("Soumettre"):
+        if cv:
+            dfs = []
+            for file in cv:
+                if file.type == "application/pdf":
+                    cv_text = extract_text_from_pdf(file)
+                    dfs.append(pd.DataFrame({'nom_fichier': [file.name], 'skills': [cv_text]}))
+            if dfs:
+                df = pd.concat(dfs, ignore_index=True)
+                st.success(f"{len(dfs)} CVs parcourus avec succès !")
+            else:
+                st.warning("Aucun CV valide trouvé. Veuillez télécharger des fichiers PDF.")
+        else:
+            st.warning("Veuillez charger au moins un CV.")
+
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
             df_select = search_candidates(competences, df)
             st.write(df_select)
-
+            
             # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
             df_min = df_select[df_select['similarite'] > 0]
             df_top = df_select[df_select['similarite'] > 0.5]
-
+            
             # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
             if len(df_min) > 0:
                 st.info(f"Il y a {len(df_min)} CVs qui correspondent à au moins un mot clé.")
@@ -111,5 +125,3 @@ if menu == "Lancer l'app":
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
                         st.write(cv_row['skills'])
                     rank += 1
-        else:
-            st.warning("Veuillez charger des CVs et saisir des mots-clés pour effectuer une recherche.")
