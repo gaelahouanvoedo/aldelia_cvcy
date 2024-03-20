@@ -43,7 +43,7 @@ def search_candidates(competences, df):
 df = pd.DataFrame(columns=['nom_fichier', 'skills'])
 
 with st.sidebar:
-    image = Image.open('C:/Users\GaelAHOUANVOEDO\DATAWEB\cvCy\cvCy/log.png')
+    image = Image.open('log.png')
     st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
     menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app"))
