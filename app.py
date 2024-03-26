@@ -111,7 +111,7 @@ if menu == "Lancer l'app":
             df_min = df_select[df_select['similarite'] > 0]
             df_top = df_select[df_select['similarite'] > 0.5]
 
-            st.write(df)
+            st.write(df_select)
             # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
             if len(df_min) > 0:
                 st.info(f"Il y a {len(df_min)} CVs qui correspondent à au moins un mot clé.")
