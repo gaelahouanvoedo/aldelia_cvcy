@@ -112,7 +112,8 @@ if menu == "Lancer l'app":
 
             st.write(df_select)
             # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
-           if len(df_top) > 0:
+            
+            if len(df_top) > 0:
                 st.success(f"Il y a {len(df_top)} CVs qui correspondent à au moins un mot clé.")
                 st.markdown("**Les CVs qui correspondent le mieux :**")
                 rank = 1
