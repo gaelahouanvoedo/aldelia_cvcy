@@ -1,6 +1,5 @@
 import streamlit as st
 from PIL import Image
-import PyPDF2
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -10,13 +9,6 @@ st.set_page_config(
     page_icon="🤥",
     initial_sidebar_state="expanded",
 )
-
-def extract_text_from_pdf(file):
-    pdf_reader = PyPDF2.PdfReader(file)
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
-    return text
 
 def search_candidates(competences, df):
     df_select = pd.DataFrame(columns=df.columns)
@@ -40,7 +32,7 @@ def search_candidates(competences, df):
 
     return df_select
 
-df = pd.DataFrame(columns=['nom_fichier', 'skills'])
+df = pd.read_csv('data.csv')  # Lire les données du fichier CSV
 
 with st.sidebar:
     image = Image.open('log.png')
@@ -80,30 +72,12 @@ if menu == "Introduction":
     """)
 
 if menu == "Lancer l'app":
-    st.title("1 - Chargez les CVs.")
+    st.title("1 - Recherchez les mots-clés.")
 
-    cv = st.file_uploader("Chargez un ou plusieurs CV au format PDF", type=["pdf"], accept_multiple_files=True)
-
-    st.title("2 - Recherchez les mots-clés.")
-
-    user_input = st.text_input("2 - Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
+    user_input = st.text_input("Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
     competences = user_input.split(',')
 
     if st.button("Soumettre"):
-        if cv:
-            dfs = []
-            for file in cv:
-                if file.type == "application/pdf":
-                    cv_text = extract_text_from_pdf(file)
-                    dfs.append(pd.DataFrame({'nom_fichier': [file.name], 'skills': [cv_text]}))
-            if dfs:
-                df = pd.concat(dfs, ignore_index=True)
-                st.success(f"{len(dfs)} CVs parcourus avec succès !")
-            else:
-                st.warning("Aucun CV valide trouvé. Veuillez télécharger des fichiers PDF.")
-        else:
-            st.warning("Veuillez charger au moins un CV.")
-
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
             df_select = search_candidates(competences, df)
             
@@ -123,3 +97,5 @@ if menu == "Lancer l'app":
                         cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
                         st.write(cv_row['skills'])
                     rank += 1
+        else:
+            st.warning("Veuillez saisir des mots-clés valides.")
