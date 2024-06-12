@@ -3,7 +3,6 @@ from PIL import Image
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="cvCy - ♥ IA de Gaël Ahouanvoedo",
@@ -37,16 +36,7 @@ df = pd.read_csv('data.csv')  # Lire les données du fichier CSV
 
 with st.sidebar:
     image = Image.open('log.png')
-    image_html = f"""
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <img src="data:image/png;base64,{st.image(image, width=180).image_data}" width="180"/>
-        <p style="text-align: center; margin-top: 10px;">
-            Gael Ahouanvoedo<br>
-            Ingénieur en Business Intelligence | Data Scientist | Stratège RH, Ventes & Marketing | Mentor Certifié (+100 Personnes Formés)
-        </p>
-    </div>
-    """
-    components.html(image_html, height=300)
+    st.image(image, width=180)
     st.success("Lancez l'application ici 👇")
     menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app"))
     st.subheader("Informations")
