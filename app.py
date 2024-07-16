@@ -1,14 +1,22 @@
 import streamlit as st
 from PIL import Image
+import PyPDF2
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 st.set_page_config(
-    page_title="cvCy - ♥ IA de Gaël Ahouanvoedo",
+    page_title="cvCy - ♥ AI by Gaël Ahouanvoedo",
     page_icon="🤥",
     initial_sidebar_state="expanded",
 )
+
+def extract_text_from_pdf(file):
+    pdf_reader = PyPDF2.PdfReader(file)
+    text = ""
+    for page in pdf_reader.pages:
+        text += page.extract_text()
+    return text
 
 def search_candidates(competences, df):
     df_select = pd.DataFrame(columns=df.columns)
@@ -32,70 +40,85 @@ def search_candidates(competences, df):
 
     return df_select
 
-df = pd.read_csv('data.csv')  # Lire les données du fichier CSV
+df = pd.DataFrame(columns=['file_name', 'skills'])
 
 with st.sidebar:
-    image = Image.open('log.png')
+    image = Image.open('C:/Users\GaelAHOUANVOEDO\DATAWEB\cvCy\cvCy\log.png')
     st.image(image, width=180)
-    st.success("Lancez l'application ici 👇")
-    menu = st.sidebar.selectbox("Menu", ('Introduction', "Lancer l'app"))
-    st.subheader("Informations")
-    st.write("Cette application permet de rechercher des mots-clés dans une base de CVs.", unsafe_allow_html=True)
+    st.success("Launch the application here 👇")
+    menu = st.sidebar.selectbox("Menu", ('Introduction', "Launch the app"))
+    st.subheader("Information")
+    st.write("This application allows you to search for keywords in a database of CVs.", unsafe_allow_html=True)
     '***'
-    '**Conçu avec ♥ par Gaël Ahouanvoedo**'
+    '**Designed with ♥ by Gaël Ahouanvoedo**'
 
 if menu == "Introduction":
     st.write("""
-    # Sélection de CV.
+    # CV Selection.
     
-    Cette application permet de sélectionner le CV qui répond le mieux à une liste de mots-clés. 
+    This application allows you to select the CV that best matches a list of keywords. 
                    
     """)
 
     st.write("""
-    **👈 Pour démarrer, sélectionnez "Lancer l'app" dans la barre latérale.**             
+    **👈 To get started, select "Launch the app" from the sidebar.**             
     """)
 
     st.write("""
-    ### Crédits
+    ### Credits
     Gaël Ahouanvoedo, gael.ahouanvoedo@aldelia.com
     """)
 
     st.write("""
-    ### Site Web
+    ### Website
     https://www.aldelia.com/en/        
     """)
 
     st.write("""
-    ### Avertissement
-    Il s'agit d'une micro-application web créée pour un besoin spécifique. Elle peut ne pas répondre à vos attentes dans tous vos contextes. Veuillez donc ne pas vous fier entièrement aux résultats issus de son exploitation.
+    ### Disclaimer
+    This is a web micro-application created for a specific need. It may not meet your expectations in all your contexts. Therefore, please do not rely entirely on the results obtained from its use.
     """)
 
-if menu == "Lancer l'app":
-    st.title("1 - Recherchez les mots-clés.")
+if menu == "Launch the app":
+    st.title("1 - Upload CVs.")
 
-    user_input = st.text_input("Saisissez les mots-clés recherchés séparés par des virgules (ex: data, business, banque) : ")
+    cv = st.file_uploader("Upload one or more CVs in PDF format", type=["pdf"], accept_multiple_files=True)
+
+    st.title("2 - Search for keywords.")
+
+    user_input = st.text_input("Enter the keywords you are looking for, separated by commas (e.g., data, business, banking): ")
     competences = user_input.split(',')
 
-    if st.button("Soumettre"):
+    if st.button("Submit"):
+        if cv:
+            dfs = []
+            for file in cv:
+                if file.type == "application/pdf":
+                    cv_text = extract_text_from_pdf(file)
+                    dfs.append(pd.DataFrame({'file_name': [file.name], 'skills': [cv_text]}))
+            if dfs:
+                df = pd.concat(dfs, ignore_index=True)
+                st.success(f"{len(dfs)} CVs processed successfully!")
+            else:
+                st.warning("No valid CVs found. Please upload PDF files.")
+        else:
+            st.warning("Please upload at least one CV.")
+
         if len(competences) > 0 and not df.empty:  # Check if competences and df are not empty
             df_select = search_candidates(competences, df)
             
-            # Filtrer les CVs avec une similarité supérieure à 0.5 et 0.7
+            # Filter out CVs with a similarity score above 0.5 and 0.7
             df_top = df_select[df_select['similarite'] > 0]
 
-            # Afficher une alerte avec le nombre de CVs correspondant à chaque similarité
-            
+            # Display an alert with the number of CVs corresponding to each similarity score
             if len(df_top) > 0:
-                st.success(f"Il y a {len(df_top)} CVs qui correspondent à au moins un mot clé.")
+                st.success(f"There are {len(df_top)} CVs that match at least one keyword.")
                 st.write(df_select)
-                st.markdown("**Les CVs qui correspondent le mieux :**")
+                st.markdown("**Top matching CVs:**")
                 rank = 1
                 for idx, row in df_top.iterrows():
-                    expander = st.expander(f"{rank} - {row['nom_fichier']} - Cliquez pour voir le CV")
+                    expander = st.expander(f"{rank} - {row['file_name']} - Click to view CV")
                     with expander:
-                        cv_row = df[df['nom_fichier'] == row['nom_fichier']].iloc[0]
+                        cv_row = df[df['file_name'] == row['file_name']].iloc[0]
                         st.write(cv_row['skills'])
                     rank += 1
-        else:
-            st.warning("Veuillez saisir des mots-clés valides.")
